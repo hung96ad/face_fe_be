@@ -21,17 +21,7 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    access_token_expires = timedelta(
-        minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
-    if user.is_superuser:
-        permissions = "admin"
-    else:
-        permissions = "user"
-    access_token = security.create_access_token(
-        data={"sub": user.email, "permissions": permissions},
-        expires_delta=access_token_expires,
-    )
+    access_token = get_access_token(user)
 
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -47,7 +37,11 @@ async def signup(
             detail="Account already exists",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    access_token = get_access_token(user)
 
+    return {"access_token": access_token, "token_type": "bearer"}
+
+def get_access_token(user):
     access_token_expires = timedelta(
         minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES
     )
@@ -56,8 +50,7 @@ async def signup(
     else:
         permissions = "user"
     access_token = security.create_access_token(
-        data={"sub": user.email, "permissions": permissions},
+        data={"sub": user.email, "permissions": permissions, "id": user.id, "fullName": f"{user.first_name} {user.last_name}"},
         expires_delta=access_token_expires,
     )
-
-    return {"access_token": access_token, "token_type": "bearer"}
+    return access_token

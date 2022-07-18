@@ -9,8 +9,9 @@ from app.db.crud import (
     delete_user,
     edit_user,
 )
-from app.db.schemas import UserCreate, UserEdit, User, UserOut
+from app.db.schemas_user import UserCreate, UserEdit, User
 from app.core.auth import get_current_active_user, get_current_active_superuser
+from app.db.schemas import QueryParams
 
 users_router = r = APIRouter()
 
@@ -22,15 +23,20 @@ users_router = r = APIRouter()
 )
 async def users_list(
     response: Response,
+    filter: t.Union[str, None] = {},
+    range: t.Union[str, None] = None,
+    sort: t.Union[str, None] = None,
     db=Depends(get_db),
     current_user=Depends(get_current_active_superuser),
 ):
     """
     Get all users
     """
-    users = get_users(db)
+    query_params = QueryParams(filter=filter, range=range, sort=sort)
+    q, skip, limit, filter, sort, range = query_params.get_query_params("q")
+    count, users = get_users(db, q=q, filter=filter, skip=skip, limit=limit, order_by=sort)
     # This is necessary for react-admin to work
-    response.headers["Content-Range"] = f"0-9/{len(users)}"
+    response.headers["Content-Range"] = f"items {range[0]}-{range[1]}/{count}"
     return users
 
 
