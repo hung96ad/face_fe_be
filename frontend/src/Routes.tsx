@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -23,12 +23,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Routesc: FC = () => {
+export const Routes: FC = () => {
   const classes = useStyles();
   const history = useHistory();
 
   return (
-    <Routes>
+    <Switch>
       <Route path="/admin">
         <Admin />
       </Route>
@@ -49,6 +49,6 @@ export const Routesc: FC = () => {
           <Route exact path="/" component={Home} />
         </header>
       </div>
-    </Routes>
+    </Switch>
   );
 };

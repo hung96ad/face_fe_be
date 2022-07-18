@@ -8,7 +8,7 @@ import {
 } from 'react-admin';
 
 export const UserEdit: FC = (props) => (
-  <Edit {...props}>
+  <Edit {...props} title={"Sửa thông tin người dùng"}>
     <SimpleForm>
       <TextInput disabled source="id" />
       <TextInput source="email" />

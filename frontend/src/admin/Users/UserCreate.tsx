@@ -8,7 +8,7 @@ import {
 } from 'react-admin';
 
 export const UserCreate: FC = (props) => (
-  <Create {...props}>
+  <Create {...props} title={"Tạo mới người dùng"}>
     <SimpleForm>
       <TextInput source="email" />
       <TextInput source="first_name" />
