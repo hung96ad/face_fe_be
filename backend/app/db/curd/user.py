@@ -2,29 +2,30 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from . import models, schemas_user
+from app.db.model.user import User
+from app.db.schema import user as schemas_user
 from app.core.security import get_password_hash
-from .crud_room import get_query, query_count
+from .room import get_query, query_count
 
 
 def get_user(db: Session, user_id: int):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
+    user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
 
 def get_user_by_email(db: Session, email: str) -> schemas_user.UserBase:
-    return db.query(models.User).filter(models.User.email == email).first()
+    return db.query(User).filter(User.email == email).first()
 
 
 def get_users(
     db: Session, q: str, filter:dict = {}, skip: int = 0, limit: int = 100, order_by: list = []
 ) -> t.Union[int , t.List[schemas_user.UserOut]]:
-    query = db.query(models.User)
+    query = db.query(User)
     if q:
-        query = query.filter(models.User.email.ilike(f"%{q}%"))
-    query = get_query(query, filter, order_by, models.User)
+        query = query.filter(User.email.ilike(f"%{q}%"))
+    query = get_query(query, filter, order_by, User)
     count = query_count(query)
     query = query.offset(skip).limit(limit)
     return count, query.all()
@@ -32,7 +33,7 @@ def get_users(
 
 def create_user(db: Session, user: schemas_user.UserCreate):
     hashed_password = get_password_hash(user.password)
-    db_user = models.User(
+    db_user = User(
         first_name=user.first_name,
         last_name=user.last_name,
         email=user.email,

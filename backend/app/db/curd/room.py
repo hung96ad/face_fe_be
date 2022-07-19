@@ -2,7 +2,8 @@ from fastapi import HTTPException, status
 from sqlalchemy import text, func, literal_column
 from sqlalchemy.orm import Session
 import typing as t
-from . import models, schemas_room
+from app.db.model.room import RoomTree, Room
+from app.db.schema import room as schemas_room
 
 
 def query_count(query):
@@ -24,13 +25,13 @@ def get_query(query, filter, order_by, table):
     return query
 
 def get_room_view(db: Session, room_id: int):
-    room = db.query(models.RoomTree).filter(models.RoomTree.id == room_id).first()
+    room = db.query(RoomTree).filter(RoomTree.id == room_id).first()
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
     return room
 
 def get_room(db: Session, room_id: int):
-    room = db.query(models.Room).filter(models.Room.id == room_id).first()
+    room = db.query(Room).filter(Room.id == room_id).first()
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
     return room
@@ -39,17 +40,17 @@ def get_room(db: Session, room_id: int):
 def get_room_by_name(
         db: Session, q: str, filter:dict = {}, skip: int = 0, limit: int = 100, order_by: list = []
     ) -> t.Tuple[int, t.List[schemas_room.RoomTree]]:
-    query = db.query(models.RoomTree)
+    query = db.query(RoomTree)
     if q:
-        query = query.filter(models.RoomTree.name.ilike(f"%{q}%"))
-    query = get_query(query, filter, order_by, models.RoomTree)
+        query = query.filter(RoomTree.name.ilike(f"%{q}%"))
+    query = get_query(query, filter, order_by, RoomTree)
     count = query_count(query)
     query = query.offset(skip).limit(limit)
     return count, query.all()
 
 
 def create_room(db: Session, room: schemas_room.RoomCreate):
-    db_room = models.Room(
+    db_room = Room(
         parent_id=room.parent_id,
         name=room.name
     )

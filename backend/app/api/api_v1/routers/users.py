@@ -2,14 +2,14 @@ from fastapi import APIRouter, Request, Depends, Response, encoders
 import typing as t
 
 from app.db.session import get_db
-from app.db.crud import (
+from app.db.curd.user import (
     get_users,
     get_user,
     create_user,
     delete_user,
     edit_user,
 )
-from app.db.schemas_user import UserCreate, UserEdit, User
+from app.db.schema.user import UserCreate, UserEdit, User
 from app.core.auth import get_current_active_user, get_current_active_superuser
 from app.db.schemas import QueryParams
 

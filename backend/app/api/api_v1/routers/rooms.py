@@ -2,14 +2,14 @@ from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
 from app.db.session import get_db
-from app.db.crud_room import (
+from app.db.curd.room import (
     get_room_by_name,
     create_room,
     delete_room,
     edit_room,
     get_room_view
 )
-from app.db.schemas_room import RoomCreate, RoomEdit, Room, RoomTree
+from app.db.schema.room import RoomCreate, RoomEdit, Room, RoomTree
 from app.db.schemas import QueryParams
 
 rooms_router = r = APIRouter()
