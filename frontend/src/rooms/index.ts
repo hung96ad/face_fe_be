@@ -1,6 +1,6 @@
 import { RoomEdit } from './RoomEdit';
-import { RoomList } from './RoomList';
 import { RoomCreate } from './RoomCreate';
+import RoomList from './RoomList';
 import RoomIcon from '@mui/icons-material/Room';
 
 export default {
