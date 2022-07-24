@@ -1,10 +1,13 @@
 from fastapi import FastAPI, Depends
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 import uvicorn
 
 from app.api.api_v1.routers.users import users_router
 from app.api.api_v1.routers.rooms import rooms_router
+from app.api.api_v1.routers.cameras import cameras_router
+from app.api.api_v1.routers.face import faces_router
 from app.api.api_v1.routers.auth import auth_router
 from app.core import config
 from app.db.session import SessionLocal
@@ -35,6 +38,7 @@ async def db_session_middleware(request: Request, call_next):
     request.state.db.close()
     return response
 
+app.mount(config.STATIC_API, StaticFiles(directory=config.PATH_STATIC), name="static")
 
 @app.get("/api/v1")
 async def root():
@@ -55,10 +59,25 @@ app.include_router(
     tags=["users"],
     dependencies=[Depends(get_current_active_user)],
 )
+
 app.include_router(
     rooms_router,
     prefix="/api/v1",
     tags=["rooms"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    cameras_router,
+    prefix="/api/v1",
+    tags=["cameras"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    faces_router,
+    prefix="/api/v1",
+    tags=["faces"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(auth_router, prefix="/api", tags=["auth"])

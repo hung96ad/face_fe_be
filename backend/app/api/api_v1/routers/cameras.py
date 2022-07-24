@@ -2,14 +2,14 @@ from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
 from app.db.session import get_db
-from app.db.crud_camera import (
+from app.db.curd.camera import (
     get_camera_by_name,
     create_camera,
     delete_camera,
     edit_camera,
-    get_camera_view
+    get_camera
 )
-from app.db.schemas_camera import CameraCreate, CameraEdit, Camera, CameraTree
+from app.db.schema.camera import CameraCreate, CameraEdit, CameraOut, Camera
 from app.db.schemas import QueryParams
 
 cameras_router = r = APIRouter()
@@ -17,7 +17,7 @@ cameras_router = r = APIRouter()
 
 @r.get(
     "/cameras/{camera_id}",
-    response_model=Camera,
+    response_model=CameraOut,
     response_model_exclude_none=True,
 )
 async def camera_details(
@@ -28,14 +28,14 @@ async def camera_details(
     """
     Get any camera details
     """
-    camera = get_camera_view(db, camera_id)
+    camera = get_camera(db, camera_id)
     return camera
 
 
 
 @r.get(
     "/cameras",
-    response_model=t.List[CameraTree],
+    response_model=t.List[Camera],
     response_model_exclude_none=True,
 )
 async def cameras_by_name(

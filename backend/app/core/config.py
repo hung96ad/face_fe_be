@@ -6,3 +6,6 @@ SQLALCHEMY_DATABASE_URI = "postgresql://postgres:password@localhost/postgres"
 # SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
 API_V1_STR = "/api/v1"
+
+PATH_STATIC = "./app/static"
+STATIC_API = "/static"
