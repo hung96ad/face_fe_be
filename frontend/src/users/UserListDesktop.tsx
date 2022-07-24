@@ -36,7 +36,7 @@ const UserListDesktop = ({ selectedRow }: UserListDesktopProps) => (
         <TextField source="first_name" />
         <TextField source="last_name" />
         <BooleanField source="is_active" />
-        {/* <BooleanField source="is_superuser" /> */}
+        <BooleanField source="is_superuser" />
     </Datagrid>
 );
 

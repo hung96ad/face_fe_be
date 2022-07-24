@@ -46,7 +46,7 @@ const UserList = () => {
                 sx={{ zIndex: 100 }}
             >
                 {/* {!!match && (
-                    <ReviewEdit
+                    <UserEdit
                         id={(match as any).params.id}
                         onCancel={handleClose}
                     />

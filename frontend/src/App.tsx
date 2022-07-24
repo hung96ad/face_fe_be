@@ -13,6 +13,7 @@ import Configuration from './configuration/Configuration';
 import users from './users';
 import restAPI from './dataProvider';
 import rooms from './rooms';
+import camera from './camera';
 import { BASE_URL } from './configuration/config';
 const httpClient = (url: any, options: any) => {
     if (!options) {
@@ -65,6 +66,11 @@ const App = () => {
                             name="rooms"
                             options={{ label: 'Quản trị thông tin phòng' }}
                             {...rooms}
+                        />,
+                        <Resource
+                            name="cameras"
+                            options={{ label: 'Quản trị thông tin camera' }}
+                            {...camera}
                         />,
                     ]
                 ) : null,

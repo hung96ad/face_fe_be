@@ -22,7 +22,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 const RoomList = () => (
     <ListBase perPage={1000}>
         <ListActions />
-        <Box maxWidth="50em" marginTop="1em">
+        <Box marginTop="1em">
             <Card>
                 <Tree />
             </Card>

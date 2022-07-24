@@ -26,9 +26,9 @@ const customEnglishMessages: TranslationMessages = {
                     'by %{customer_name}, one item |||| by %{customer_name}, %{nb_items} items',
             },
             welcome: {
-                title: 'Welcome to the react-admin e-commerce demo',
+                title: 'Welcome to the AI face recognition',
                 subtitle:
-                    "This is the admin of an imaginary poster shop. Feel free to explore and modify the data - it's local to your computer, and will reset each time you reload.",
+                    "This is the system administrator",
                 ra_button: 'react-admin site',
                 demo_button: 'Source for this demo',
             },
@@ -173,6 +173,7 @@ const customEnglishMessages: TranslationMessages = {
         },
         users: {
             name: 'User |||| Users',
+            camera: 'Camera |||| Cameras',
             room: 'Room |||| Rooms'
         },
         reviews: {
