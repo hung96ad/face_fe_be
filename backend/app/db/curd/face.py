@@ -14,15 +14,27 @@ def get_face(db: Session, face_id: int):
         raise HTTPException(status_code=404, detail="Face not found")
     return face
 
+
 def get_face_images(db: Session, face_id: int):
     face = db.query(FaceImage).filter(FaceImage.id == face_id).first()
     if not face:
         raise HTTPException(status_code=404, detail="Face image not found")
     return face
 
+
+def get_face_images_by_face_id(
+    db: Session, filter: dict = {}, skip: int = 0, limit: int = 100, order_by: list = []
+) -> t.Tuple[int, t.List[schemas_face.FaceImagesOut]]:
+    query = db.query(FaceImage)
+    query = get_query(query, filter, order_by, FaceImage)
+    count = query_count(query)
+    query = query.offset(skip).limit(limit)
+    return count, query.all()
+
+
 def get_face_by_name(
-        db: Session, q: str, filter:dict = {}, skip: int = 0, limit: int = 100, order_by: list = []
-    ) -> t.Tuple[int, t.List[schemas_face.FaceOut]]:
+    db: Session, q: str, filter: dict = {}, skip: int = 0, limit: int = 100, order_by: list = []
+) -> t.Tuple[int, t.List[schemas_face.FaceOut]]:
     query = db.query(Face)
     if q:
         query = query.filter(Face.name.ilike(f"%{q}%"))
@@ -70,7 +82,7 @@ def edit_face(
     return db_face
 
 
-def save_face_image(db: Session, face_id:int, filename:str, contents:bytes):
+def save_face_image(db: Session, face_id: int, filename: str, contents: bytes):
     path_folder = f"{config.PATH_STATIC}/{face_id}"
     os.makedirs(path_folder, exist_ok=True)
     file_path = f"{path_folder}/{filename}"
@@ -78,12 +90,13 @@ def save_face_image(db: Session, face_id:int, filename:str, contents:bytes):
         f.write(contents)
     path = f"{config.STATIC_API}/{face_id}/{filename}"
     face_image = FaceImage(id_face=face_id,
-        path = path,
-        status=True)
+                           path=path,
+                           status=True)
     db.add(face_image)
     db.commit()
     db.refresh(face_image)
     return face_image
+
 
 def delete_face_images(db: Session, face_id: int):
     face = get_face_images(db, face_id)
