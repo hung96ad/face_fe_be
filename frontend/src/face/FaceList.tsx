@@ -17,7 +17,7 @@ export const FaceList: FC = (props: any) => (
   <List {...props} filters={postFilters}>
     <Datagrid rowClick="edit">
       <TextField source="id" />
-      <TextField source="name" label="Tên camera" />
+      <TextField source="name" label="Tên" />
       <ReferenceField source="id_room" label="Tên phòng" reference="rooms">
         <TextField source="name" />
       </ReferenceField>

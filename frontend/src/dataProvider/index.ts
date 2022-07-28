@@ -1,5 +1,24 @@
 import { stringify } from 'query-string';
 import { fetchUtils, DataProvider } from 'ra-core';
+
+function getFromData(params: any) {
+    const formData = new FormData();
+    for (const param in params.data) {
+        if (param === 'file') {
+            formData.append('file', params.data[param].rawFile);
+            continue
+        }
+        if (param === 'files') {
+            params.data[param].forEach((file: any) => {
+                formData.append('files', file.rawFile);
+            });
+            continue
+        }
+        formData.append(param, params.data[param]);
+    };
+    return formData;
+}
+
 export default (
     apiUrl: string,
     httpClient = fetchUtils.fetchJson,
@@ -21,11 +40,11 @@ export default (
         const options =
             countHeader === 'Content-Range'
                 ? {
-                      // Chrome doesn't return `Content-Range` header if no `Range` is provided in the request.
-                      headers: new Headers({
-                          Range: `${resource}=${rangeStart}-${rangeEnd}`,
-                      }),
-                  }
+                    // Chrome doesn't return `Content-Range` header if no `Range` is provided in the request.
+                    headers: new Headers({
+                        Range: `${resource}=${rangeStart}-${rangeEnd}`,
+                    }),
+                }
                 : {};
 
         return httpClient(url, options).then(({ headers, json }) => {
@@ -39,9 +58,9 @@ export default (
                 total:
                     countHeader === 'Content-Range'
                         ? parseInt(
-                              headers.get('content-range')!.split('/')!.pop()!,
-                              10
-                          )
+                            headers.get('content-range')!.split('/')!.pop()!,
+                            10
+                        )
                         : parseInt(headers.get(countHeader.toLowerCase())!),
             };
         });
@@ -79,11 +98,11 @@ export default (
         const options =
             countHeader === 'Content-Range'
                 ? {
-                      // Chrome doesn't return `Content-Range` header if no `Range` is provided in the request.
-                      headers: new Headers({
-                          Range: `${resource}=${rangeStart}-${rangeEnd}`,
-                      }),
-                  }
+                    // Chrome doesn't return `Content-Range` header if no `Range` is provided in the request.
+                    headers: new Headers({
+                        Range: `${resource}=${rangeStart}-${rangeEnd}`,
+                    }),
+                }
                 : {};
 
         return httpClient(url, options).then(({ headers, json }) => {
@@ -97,36 +116,71 @@ export default (
                 total:
                     countHeader === 'Content-Range'
                         ? parseInt(
-                              headers.get('content-range')!.split('/')!.pop()!,
-                              10
-                          )
+                            headers.get('content-range')!.split('/')!.pop()!,
+                            10
+                        )
                         : parseInt(headers.get(countHeader.toLowerCase())!),
             };
         });
     },
 
-    update: (resource, params) =>
-        httpClient(`${apiUrl}/${resource}/${params.id}`, {
-            method: 'PUT',
-            body: JSON.stringify(params.data),
-        }).then(({ json }) => ({ data: json })),
-
-    // simple-rest doesn't handle provide an updateMany route, so we fallback to calling update n times instead
-    updateMany: (resource, params) =>
-        Promise.all(
-            params.ids.map(id =>
-                httpClient(`${apiUrl}/${resource}/${id}`, {
+    update: (resource, params) => {
+        switch (resource) {
+            case "faces":
+            case "face_images":
+                return httpClient(`${apiUrl}/${resource}`, {
+                    method: 'PUT',
+                    body: getFromData(params),
+                }).then(({ json }) => ({ data: json }));
+            default:
+                return httpClient(`${apiUrl}/${resource}`, {
                     method: 'PUT',
                     body: JSON.stringify(params.data),
-                })
-            )
-        ).then(responses => ({ data: responses.map(({ json }) => json.id) })),
+                }).then(({ json }) => ({ data: json }));
+        }
+    },
 
-    create: (resource, params) =>
-        httpClient(`${apiUrl}/${resource}`, {
-            method: 'POST',
-            body: JSON.stringify(params.data),
-        }).then(({ json }) => ({ data: json })),
+    updateMany: (resource, params) => {
+        switch (resource) {
+            case "faces":
+            case "face_images":
+                return Promise.all(
+                    params.ids.map(id =>
+                        httpClient(`${apiUrl}/${resource}/${id}`, {
+                            method: 'PUT',
+                            body: getFromData(params),
+                        })
+                    )
+                ).then(responses => ({ data: responses.map(({ json }) => json.id) }))
+            default:
+                return Promise.all(
+                    params.ids.map(id =>
+                        httpClient(`${apiUrl}/${resource}/${id}`, {
+                            method: 'PUT',
+                            body: JSON.stringify(params.data),
+                        })
+                    )
+                ).then(responses => ({ data: responses.map(({ json }) => json.id) }))
+
+        }
+
+    },
+
+    create: (resource, params) => {
+        switch (resource) {
+            case "faces":
+            case "face_images":
+                return httpClient(`${apiUrl}/${resource}`, {
+                    method: 'POST',
+                    body: getFromData(params),
+                }).then(({ json }) => ({ data: json }));
+            default:
+                return httpClient(`${apiUrl}/${resource}`, {
+                    method: 'POST',
+                    body: JSON.stringify(params.data),
+                }).then(({ json }) => ({ data: json }));
+        }
+    },
 
     delete: (resource, params) =>
         httpClient(`${apiUrl}/${resource}/${params.id}`, {
@@ -136,7 +190,6 @@ export default (
             }),
         }).then(({ json }) => ({ data: json })),
 
-    // simple-rest doesn't handle filters on DELETE route, so we fallback to calling DELETE n times instead
     deleteMany: (resource, params) =>
         Promise.all(
             params.ids.map(id =>

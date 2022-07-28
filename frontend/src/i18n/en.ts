@@ -174,6 +174,7 @@ const customEnglishMessages: TranslationMessages = {
         users: {
             name: 'User |||| Users',
             camera: 'Camera |||| Cameras',
+            face: 'Face |||| Faces',
             room: 'Room |||| Rooms'
         },
         reviews: {

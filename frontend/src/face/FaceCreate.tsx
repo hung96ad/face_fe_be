@@ -4,7 +4,9 @@ import {
   SimpleForm,
   TextInput,
   SelectInput,
-  ReferenceInput
+  ReferenceInput,
+  ImageInput,
+  ImageField
 } from 'react-admin';
 
 export const FaceCreate: FC = (props: any) => (
@@ -12,11 +14,13 @@ export const FaceCreate: FC = (props: any) => (
     <SimpleForm defaultValues={{
       status: true,
     }}>
-      <TextInput source="name" required/>
-      <TextInput source="path" required/>
+      <TextInput source="name" required />
       <ReferenceInput source="id_room" label="Phòng" reference="rooms">
-        <SelectInput optionText="name" required/>
+        <SelectInput optionText="name" required />
       </ReferenceInput>
+      <ImageInput source="file" label="Related pictures" accept="image/*">
+        <ImageField source="src" title="title" />
+      </ImageInput>
     </SimpleForm>
   </Create>
 );

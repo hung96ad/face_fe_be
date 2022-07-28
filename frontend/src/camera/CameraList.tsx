@@ -7,10 +7,18 @@ import {
   EditButton,
   TextInput,
   BooleanField,
-  ReferenceField
+  ReferenceField,
+  SelectInput
 } from 'react-admin';
 const postFilters = [
-  <TextInput source="q" label="Tìm kiếm" alwaysOn />
+  <TextInput source="q" label="Tìm kiếm" alwaysOn />,
+  <SelectInput source="id_room" label="Loại phòng" choices={[
+    { id: 0, name: 'Cơ sở' },
+    { id: 1, name: 'Tòa nhà' },
+    { id: 2, name: 'Khu vực' },
+    { id: 3, name: 'Tầng' },
+    { id: 4, name: 'Phòng' },
+  ]} />
 ];
 
 export const CameraList: FC = (props: any) => (

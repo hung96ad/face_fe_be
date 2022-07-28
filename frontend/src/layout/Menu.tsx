@@ -13,6 +13,7 @@ import {
 import users from '../users';
 import rooms from '../rooms';
 import camera from '../camera';
+import face from '../face';
 
 const Menu = ({ dense = false }: MenuProps) => {
     const [state, setState] = useState({
@@ -62,6 +63,15 @@ const Menu = ({ dense = false }: MenuProps) => {
                     smart_count: 2,
                 })}
                 leftIcon={<camera.icon />}
+                dense={dense}
+            />
+            <MenuItemLink
+                to="/faces"
+                state={{ _scrollToTop: true }}
+                primaryText={translate(`resources.users.face`, {
+                    smart_count: 2,
+                })}
+                leftIcon={<face.icon />}
                 dense={dense}
             />
         </Box>
