@@ -16,10 +16,12 @@ export const RoomCreate = () => (
       <ReferenceInput source="parent_id" label="Nhóm cha" reference="rooms">
         <AutocompleteInput
           optionText={(choice?: Rooms) =>
-            choice?.id 
+            choice?.id
               ? `${choice.name}`
               : ''
           }
+          defaultValue={null}
+          emptyValue={null}
         />
       </ReferenceInput>
     </SimpleForm>

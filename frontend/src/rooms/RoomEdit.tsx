@@ -1,3 +1,4 @@
+import { ListItemSecondaryAction } from '@mui/material';
 import React from 'react';
 import {
   Edit,
@@ -13,14 +14,27 @@ import {
   EditButton,
   useRecordContext,
   Labeled,
+  TopToolbar,
+  ExportButton,
 } from 'react-admin';
 import { Rooms } from '../types';
+import CreateRoomButton from './CreateRoomButton';
+
+const PostListActions = (props: any) => {
+  return (
+    <TopToolbar>
+      <CreateRoomButton record={props.record} />
+      <ExportButton />
+    </TopToolbar>
+  )
+};
 
 const RoomListItem = (props: any) => {
   const record = useRecordContext(props);
+  // console.log(record);
   return (
     <Labeled label="Nhóm phòng con" fullWidth>
-      <List filter={{ parent_id: record.id }} title={' '}>
+      <List filter={{ parent_id: record.id }} title={' '} actions={<PostListActions record={record} />}>
         <Datagrid rowClick="edit">
           <TextField source="id" />
           <TextField source="name" label="Tên phòng" />

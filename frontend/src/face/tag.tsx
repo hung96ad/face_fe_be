@@ -4,7 +4,6 @@ import {
     ListBase,
     ListActions,
     useListContext,
-    EditButton,
     Title,
 } from 'react-admin';
 import {
@@ -12,18 +11,26 @@ import {
     List,
     ListItem,
     ListItemText,
-    ListItemSecondaryAction,
     Collapse,
     Card,
 } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import CreateRoomButton from './CreateRoomButton';
 
-const RoomList = () => (
-    <ListBase perPage={10000}>
+const TagList = () => (
+    <ListBase perPage={10000} resource='rooms' >
         <ListActions />
-        <Box marginTop="1em">
+        <Box maxWidth="20em" marginTop="1em" sx={{
+            display: {
+                xs: 'none',
+                md: 'block',
+            },
+            order: -1,
+            flex: '0 0 15em',
+            mr: 2,
+            mt: 8,
+            alignSelf: 'flex-start',
+        }}>
             <Card>
                 <Tree />
             </Card>
@@ -66,6 +73,7 @@ const Tree = () => {
         </List>
     );
 };
+
 interface SubTreeProps {
     key: any
     level: number
@@ -88,11 +96,6 @@ const SubTree = (props: SubTreeProps) => {
                 {hasChildren && !open && <ExpandMore />}
                 {!hasChildren && <div style={{ width: 24 }}>&nbsp;</div>}
                 <ListItemText primary={props.root.name} />
-
-                <ListItemSecondaryAction>
-                    <EditButton record={props.root} />
-                    <CreateRoomButton record={props.root} />
-                </ListItemSecondaryAction>
             </ListItem>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
@@ -112,4 +115,4 @@ const SubTree = (props: SubTreeProps) => {
     );
 };
 
-export default RoomList;
+export default TagList;

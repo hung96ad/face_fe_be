@@ -219,6 +219,9 @@ const customEnglishMessages: TranslationMessages = {
             },
         },
     },
+    filter: {
+        room: "Room"
+    }
 };
 
 export default customEnglishMessages;
