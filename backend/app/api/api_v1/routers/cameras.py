@@ -7,9 +7,10 @@ from app.db.curd.camera import (
     create_camera,
     delete_camera,
     edit_camera,
-    get_camera
+    get_camera,
+    get_all_cameras
 )
-from app.db.schema.camera import CameraCreate, CameraEdit, CameraOut, Camera
+from app.db.schema.camera import CameraCreate, CameraEdit, CameraOut, Camera, CamerasGet
 from app.db.schemas import QueryParams
 
 cameras_router = r = APIRouter()
@@ -94,3 +95,20 @@ async def camera_delete(
     Delete existing camera
     """
     return delete_camera(db, camera_id)
+
+
+@r.get(
+    "/cameras_get",
+    response_model=t.List[CamerasGet],
+    response_model_exclude_none=True,
+)
+async def cameras_get(
+    db=Depends(get_db)
+):
+    """
+    Get all cameras
+    """
+    print("cameras_get")
+    cameras = get_all_cameras(db)
+    print("cameras_get")
+    return cameras

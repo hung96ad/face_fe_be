@@ -15,6 +15,7 @@ import restAPI from './dataProvider';
 import rooms from './rooms';
 import camera from './camera';
 import face from './face';
+import face_logs from './face_logs';
 import { BASE_URL } from './configuration/config';
 const httpClient = (url: any, options: any) => {
     if (!options) {
@@ -78,7 +79,11 @@ const App = () => {
                             options={{ label: 'Quản trị thông tin khuôn mặt' }}
                             {...face}
                         />,
-                    ]
+                        <Resource
+                            name="face_logs"
+                            options={{ label: 'Face logs' }}
+                            {...face_logs}
+                        />,]
                 ) : null,
             ]}
         </Admin>

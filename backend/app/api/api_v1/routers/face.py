@@ -1,5 +1,8 @@
 from fastapi import APIRouter, Request, Depends, Response, File, Form, UploadFile
 import typing as t
+import aiohttp
+import asyncio
+from datetime import datetime
 
 from app.db.session import get_db
 from app.db.curd.face import (
@@ -14,7 +17,7 @@ from app.db.curd.face import (
 )
 from app.db.schema.face import FaceEdit, FaceOut, FaceCreate, FaceImagesOut
 from app.db.schemas import QueryParams
-
+from app.core import config
 faces_router = r = APIRouter()
 
 
@@ -74,7 +77,15 @@ async def face_create(
     db_face = create_face(db, face)
     if file:
         contents = await file.read()
-        _ = save_face_image(db, db_face.id, file.filename, contents)
+        face_image = save_face_image(db, db_face.id, file.filename, contents)
+        # config.HOST_BE_AI
+        myobj = {
+            "faces_id": [db_face.id],
+            "images": [face_image.path]
+        }
+        url = f"{config.HOST_BE_AI}{config.ADD_FACE}"
+        x = requests.post(url, json=myobj)
+
     return db_face
 
 
@@ -162,3 +173,42 @@ async def get_face_image_by_face_id(
         db, filter=filter, skip=skip, limit=limit, order_by=sort)
     response.headers["Content-Range"] = f"items {range[0]}-{range[1]}/{count}"
     return face_images
+
+
+@r.get("/face_logs")
+async def get_face_logs(
+    response: Response,
+    filter: t.Union[str, None] = {},
+    range: t.Union[str, None] = None,
+    sort: t.Union[str, None] = None,
+):
+    """
+    Get list face logs
+    """
+    if not range: range = [0,50]
+    response.headers["Content-Range"] = f"items {range[0]}-{range[1]}/{50}"
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{config.HOST_BE_AI}{config.FACE_LOGS}",
+                                     json=config.DEFAULT_JSON_FACE)  as resp:
+            
+            results = await resp.json()
+            dt = []
+            if 'data' in results:
+                for re in results['data']:
+                    dt.append({
+                        "id": re['_id'],
+                        "time_created": datetime.fromtimestamp(re['_source']['time_created']),
+                        "camera_id": re['_source']['camera_id'],
+                        "face_id": re['_source']['face_id'],
+                        "face_url": "http://localhost:8000/static/3/20220719.png"
+                    })
+            return dt
+
+    return [{
+        "id": 1,
+        "time_created": "1666360197",
+        "camera_id": "123",
+        "face_id": "3",
+        "container_id": "123",
+        "face_url": "http://localhost:8000/static/3/20220719.png"
+    }]

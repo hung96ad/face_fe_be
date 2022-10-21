@@ -45,7 +45,7 @@ export const FaceEdit: FC = (props: any) => (
     <SimpleForm>
       <TextInput source="name" required />
       <ReferenceInput source="id_room" label="Phòng" reference="rooms">
-        <SelectInput optionText="name" required />
+        <SelectInput optionText="name" />
       </ReferenceInput>
       <BooleanInput source="status" />
       <ImageInput source="file" label="Related pictures" accept="image/*">

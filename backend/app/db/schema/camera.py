@@ -31,3 +31,9 @@ class Camera(CameraBase):
 
     class Config:
         orm_mode = True
+
+class CamerasGet(BaseModel):
+    id: int
+    rtsp: Optional[str]
+    class Config:
+        orm_mode = True

@@ -40,15 +40,14 @@ async def db_session_middleware(request: Request, call_next):
 
 app.mount(config.STATIC_API, StaticFiles(directory=config.PATH_STATIC), name="static")
 
-@app.get("/api/v1")
-async def root():
-    return {"message": "Hello World"}
+@app.get("/api/v1/ping")
+async def ping():
+    return {"message": "ok"}
 
 
 @app.get("/api/v1/task")
 async def example_task():
     celery_app.send_task("app.tasks.example_task", args=["Hello World"])
-
     return {"message": "success"}
 
 

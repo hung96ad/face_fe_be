@@ -16,7 +16,7 @@ export const FaceCreate: FC = (props: any) => (
     }}>
       <TextInput source="name" required />
       <ReferenceInput source="id_room" label="Phòng" reference="rooms">
-        <SelectInput optionText="name" required />
+        <SelectInput optionText="name" />
       </ReferenceInput>
       <ImageInput source="file" label="Related pictures" accept="image/*">
         <ImageField source="src" title="title" />
