@@ -18,3 +18,4 @@ sqlalchemy-utils==0.36.8
 python-multipart==0.0.5
 pyjwt==1.7.1
 aiofiles==0.8.0
+aiohttp==3.8.3
