@@ -12,7 +12,9 @@ export const FaceLogsList: FC = (props: any) => {
     <List {...props}>
       <Datagrid>
         <TextField source="time_created" label="Time"/>
-        <TextField source="camera_id" label="Camera ID"/>
+        <ReferenceField source="camera_id" label="Camera" reference="cameras">
+          <TextField source="name" />
+        </ReferenceField>
         <ReferenceField source="face_id" label="Name" reference="faces">
           <TextField source="name" />
         </ReferenceField>
