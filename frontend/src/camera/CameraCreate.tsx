@@ -4,7 +4,8 @@ import {
   SimpleForm,
   TextInput,
   SelectInput,
-  ReferenceInput
+  ReferenceInput,
+  required
 } from 'react-admin';
 
 export const CameraCreate: FC = (props: any) => (
@@ -12,11 +13,18 @@ export const CameraCreate: FC = (props: any) => (
     <SimpleForm defaultValues={{
       status: true,
     }}>
-      <TextInput source="name" required/>
-      <TextInput source="rtsp" required/>
+      <TextInput source="name" required />
+      <TextInput source="rtsp" required />
       <ReferenceInput source="id_room" label="Nhóm cha" reference="rooms">
-        <SelectInput optionText="name" required/>
+        <SelectInput optionText="name" required />
       </ReferenceInput>
+      <SelectInput source="service_type" choices={[
+        { id: 'fast', name: 'fast' },
+        { id: 'medium', name: 'medium' },
+        { id: 'slow', name: 'slow' },
+      ]}
+        validate={required()}
+      />
     </SimpleForm>
   </Create>
 );

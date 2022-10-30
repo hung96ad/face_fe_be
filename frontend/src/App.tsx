@@ -16,6 +16,7 @@ import rooms from './rooms';
 import camera from './camera';
 import face from './face';
 import face_logs from './face_logs';
+import face_logs_unknow from './face_logs_unknow';
 import { BASE_URL } from './configuration/config';
 const httpClient = (url: any, options: any) => {
     if (!options) {
@@ -80,9 +81,14 @@ const App = () => {
                             {...face}
                         />,
                         <Resource
-                            name="face_logs"
+                            name="face_logs_not_keep_unknow"
                             options={{ label: 'Face logs' }}
                             {...face_logs}
+                        />,
+                        <Resource
+                            name="face_logs_keep_unknow"
+                            options={{ label: 'Face logs unknow' }}
+                            {...face_logs_unknow}
                         />,]
                 ) : null,
             ]}

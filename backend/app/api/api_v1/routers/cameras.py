@@ -65,22 +65,21 @@ async def camera_create(
     """
     Create a new camera
     """
-    return create_camera(db, camera)
+    return await create_camera(db, camera)
 
 
 @r.put(
-    "/cameras/{camera_id}", response_model=Camera, response_model_exclude_none=True
+    "/cameras", response_model=Camera, response_model_exclude_none=True
 )
 async def camera_edit(
     request: Request,
-    camera_id: int,
     camera: CameraEdit,
     db=Depends(get_db),
 ):
     """
     Update existing camera
     """
-    return edit_camera(db, camera_id, camera)
+    return await edit_camera(db, camera)
 
 
 @r.delete(
@@ -108,7 +107,5 @@ async def cameras_get(
     """
     Get all cameras
     """
-    print("cameras_get")
     cameras = get_all_cameras(db)
-    print("cameras_get")
     return cameras

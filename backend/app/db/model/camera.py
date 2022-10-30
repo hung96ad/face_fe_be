@@ -9,4 +9,5 @@ class Camera(Base):
     id_room = Column(Integer, ForeignKey('room.id'))
     name = Column(String, index=True, nullable=False)
     rtsp = Column(String, nullable=False)
+    service_type = Column(String, nullable=True)
     status = Column(Boolean, default=True)

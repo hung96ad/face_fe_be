@@ -1,3 +1,4 @@
+from xmlrpc.client import Boolean
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
@@ -6,7 +7,9 @@ from app.db.schema import face as schemas_face
 from app.db.curd.room import get_query, query_count
 from app.core import config
 import os
-
+from datetime import datetime
+import aiohttp
+import asyncio
 
 def get_face(db: Session, face_id: int):
     face = db.query(Face).filter(Face.id == face_id).first()
@@ -82,7 +85,7 @@ def edit_face(
     return db_face
 
 
-def save_face_image(db: Session, face_id: int, filename: str, contents: bytes):
+def save_face_image(db: Session, face_id: int, filename: str, contents: bytes) -> FaceImage:
     path_folder = f"{config.PATH_STATIC}/{face_id}"
     os.makedirs(path_folder, exist_ok=True)
     file_path = f"{path_folder}/{filename}"
@@ -91,6 +94,7 @@ def save_face_image(db: Session, face_id: int, filename: str, contents: bytes):
     path = f"{config.STATIC_API}/{face_id}/{filename}"
     face_image = FaceImage(id_face=face_id,
                            path=path,
+                           local_path=file_path,
                            status=True)
     db.add(face_image)
     db.commit()
@@ -105,3 +109,37 @@ def delete_face_images(db: Session, face_id: int):
     db.delete(face)
     db.commit()
     return face
+
+async def get_face_logs(keep_unknow:bool = True):
+    json_data = config.DEFAULT_JSON_FACE
+    json_data['keep_unknow'] = keep_unknow
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{config.HOST_BE_AI}{config.FACE_LOGS}",
+                                     json=json_data)  as resp:
+            
+            results = await resp.json()
+            dt = []
+            if 'data' in results:
+                for re in results['data']:
+                    dt.append({
+                        "id": re['_id'],
+                        "time_created": datetime.fromtimestamp(re['_source']['time_created']),
+                        "camera_id": re['_source']['camera_id'],
+                        "face_id": re['_source']['face_id'],
+                        "face_url": re['_source']['face_url']
+                    })
+            return dt
+        
+async def insert_face_ai(face_images: FaceImage):
+    url = f"{config.HOST_BE_AI}{config.ADD_FACE}"
+    files = {'file': open(face_images.local_path, 'rb'),
+        "user_id": f"{face_images.id_face}"}
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, data=files)  as resp:
+            results = await resp.json()
+            print(f"insert_face_ai {results}")
+        
+async def upload_image(file, db, face_id):
+    contents = await file.read()
+    face_image = save_face_image(db, face_id, file.filename, contents)
+    await insert_face_ai(face_image)

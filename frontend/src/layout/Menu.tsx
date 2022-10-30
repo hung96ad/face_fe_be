@@ -15,6 +15,7 @@ import rooms from '../rooms';
 import camera from '../camera';
 import face from '../face';
 import face_logs from '../face_logs';
+import face_logs_unknow from '../face_logs_unknow';
 
 const Menu = ({ dense = false }: MenuProps) => {
     const [state, setState] = useState({
@@ -76,10 +77,17 @@ const Menu = ({ dense = false }: MenuProps) => {
                 dense={dense}
             />
             <MenuItemLink
-                to="/face_logs"
+                to="/face_logs_not_keep_unknow"
                 state={{ _scrollToTop: true }}
                 primaryText={"Face logs"}
                 leftIcon={<face_logs.icon />}
+                dense={dense}
+            />
+            <MenuItemLink
+                to="/face_logs_keep_unknow"
+                state={{ _scrollToTop: true }}
+                primaryText={"Face logs unknow"}
+                leftIcon={<face_logs_unknow.icon />}
                 dense={dense}
             />
         </Box>

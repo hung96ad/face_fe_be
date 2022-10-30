@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class FaceBase(BaseModel):
-    id_room: int
+    id_room: Optional[int]
     name: Optional[str]
     status: Optional[bool]
 

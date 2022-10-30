@@ -16,4 +16,5 @@ class FaceImage(Base):
     id = Column(Integer, primary_key=True, index=True)
     id_face = Column(Integer, ForeignKey('face.id'))
     path = Column(String)
+    local_path = Column(String)
     status = Column(Boolean, default=True)

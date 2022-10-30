@@ -5,6 +5,7 @@ class CameraBase(BaseModel):
     id_room: int
     name: Optional[str]
     status: Optional[bool]
+    service_type: Optional[str]
 
 
 class CameraOut(CameraBase):

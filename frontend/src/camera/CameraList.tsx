@@ -29,6 +29,7 @@ export const CameraList: FC = (props: any) => (
       <ReferenceField source="id_room" label="Tên phòng" reference="rooms">
         <TextField source="name" />
       </ReferenceField>
+      <TextField source="service_type" label="Loại camera" />
       <BooleanField source="status" />
       <EditButton label="Sửa" />
     </Datagrid>

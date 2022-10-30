@@ -13,7 +13,9 @@ from app.db.curd.face import (
     get_face,
     save_face_image,
     delete_face_images,
-    get_face_images_by_face_id
+    get_face_images_by_face_id, 
+    get_face_logs,
+    upload_image
 )
 from app.db.schema.face import FaceEdit, FaceOut, FaceCreate, FaceImagesOut
 from app.db.schemas import QueryParams
@@ -76,16 +78,7 @@ async def face_create(
     face = FaceCreate(id_room=id_room, name=name, status=status)
     db_face = create_face(db, face)
     if file:
-        contents = await file.read()
-        face_image = save_face_image(db, db_face.id, file.filename, contents)
-        # config.HOST_BE_AI
-        myobj = {
-            "faces_id": [db_face.id],
-            "images": [face_image.path]
-        }
-        url = f"{config.HOST_BE_AI}{config.ADD_FACE}"
-        x = requests.post(url, json=myobj)
-
+        await upload_image(file, db, db_face.id)
     return db_face
 
 
@@ -106,8 +99,7 @@ async def face_edit(
     """
     face = FaceEdit(id=id, id_room=id_room, name=name, status=status)
     if file:
-        contents = await file.read()
-        _ = save_face_image(db, id, file.filename, contents)
+        await upload_image(file, db, face.id)
     return edit_face(db, id, face)
 
 
@@ -175,40 +167,32 @@ async def get_face_image_by_face_id(
     return face_images
 
 
-@r.get("/face_logs")
-async def get_face_logs(
+@r.get("/face_logs_keep_unknow")
+async def face_logs_keep_unknow(
     response: Response,
     filter: t.Union[str, None] = {},
     range: t.Union[str, None] = None,
     sort: t.Union[str, None] = None,
 ):
     """
-    Get list face logs
+    Get list face logs keep unknow
     """
     if not range: range = [0,50]
     response.headers["Content-Range"] = f"items {range[0]}-{range[1]}/{50}"
-    async with aiohttp.ClientSession() as session:
-        async with session.post(f"{config.HOST_BE_AI}{config.FACE_LOGS}",
-                                     json=config.DEFAULT_JSON_FACE)  as resp:
-            
-            results = await resp.json()
-            dt = []
-            if 'data' in results:
-                for re in results['data']:
-                    dt.append({
-                        "id": re['_id'],
-                        "time_created": datetime.fromtimestamp(re['_source']['time_created']),
-                        "camera_id": re['_source']['camera_id'],
-                        "face_id": re['_source']['face_id'],
-                        "face_url": "http://localhost:8000/static/3/20220719.png"
-                    })
-            return dt
+    results = await get_face_logs(True)
+    return results
 
-    return [{
-        "id": 1,
-        "time_created": "1666360197",
-        "camera_id": "123",
-        "face_id": "3",
-        "container_id": "123",
-        "face_url": "http://localhost:8000/static/3/20220719.png"
-    }]
+@r.get("/face_logs_not_keep_unknow")
+async def face_logs_not_keep_unknow(
+    response: Response,
+    filter: t.Union[str, None] = {},
+    range: t.Union[str, None] = None,
+    sort: t.Union[str, None] = None,
+):
+    """
+    Get list face logs don't keep unknow
+    """
+    if not range: range = [0,50]
+    response.headers["Content-Range"] = f"items {range[0]}-{range[1]}/{50}"
+    results = await get_face_logs(False)
+    return results

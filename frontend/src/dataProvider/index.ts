@@ -2,19 +2,23 @@ import { stringify } from 'query-string';
 import { fetchUtils, DataProvider } from 'ra-core';
 
 function getFromData(params: any) {
+    console.log(params);
     const formData = new FormData();
     for (const param in params.data) {
-        if (param === 'file') {
-            formData.append('file', params.data[param].rawFile);
-            continue
+        if (params.data[param]) {
+            if (param === 'file') {
+                formData.append('file', params.data[param].rawFile);
+                continue
+            }
+            if (param === 'files') {
+                params.data[param].forEach((file: any) => {
+                    formData.append('files', file.rawFile);
+                });
+                continue
+            }
+            formData.append(param, params.data[param]);
         }
-        if (param === 'files') {
-            params.data[param].forEach((file: any) => {
-                formData.append('files', file.rawFile);
-            });
-            continue
-        }
-        formData.append(param, params.data[param]);
+
     };
     return formData;
 }
