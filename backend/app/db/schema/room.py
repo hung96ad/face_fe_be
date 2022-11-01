@@ -31,6 +31,7 @@ class RoomTree(RoomBase):
     id: int
     order_sequence: str
     parent_name: str
+    full_path: str
 
     class Config:
         orm_mode = True

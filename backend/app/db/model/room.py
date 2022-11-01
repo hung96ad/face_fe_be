@@ -18,3 +18,4 @@ class RoomTree(Base):
     type_room = Column(Integer)
     order_sequence = Column(String)
     parent_name = Column(String)
+    full_path = Column(String)

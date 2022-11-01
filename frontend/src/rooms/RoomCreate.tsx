@@ -20,8 +20,8 @@ export const RoomCreate = () => (
               ? `${choice.name}`
               : ''
           }
-          defaultValue={null}
-          emptyValue={null}
+          // defaultValue={null}
+          // emptyValue={null}
         />
       </ReferenceInput>
     </SimpleForm>
